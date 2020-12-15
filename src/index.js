@@ -9,12 +9,12 @@ import store from './store';
 
 import 'bootstrap/dist/css/bootstrap.css';
 
-
+let hashHistory = Router.hashHistory;
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router>
+      <Router basename='/build' history={hashHistory}>
         <App />
       </Router>
     </Provider>

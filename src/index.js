@@ -4,17 +4,19 @@ import App from './App';
 import {Provider} from 'react-redux';
 import {BrowserRouter as Router} from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
+//import { browserHistory } from 'react-router'
+
 
 import store from './store';
 
 import 'bootstrap/dist/css/bootstrap.css';
 
-let hashHistory = Router.hashHistory;
+//let hashHistory = Router.hashHistory;
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router basename='/build' history={hashHistory}>
+      <Router basename={'test-frontend'}>
         <App />
       </Router>
     </Provider>

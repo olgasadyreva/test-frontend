@@ -26,20 +26,20 @@ class App extends React.Component {
     if(local && JSON.parse(local).length !== 0) {
 
       this.setState({'users' : Object.assign(JSON.parse(localStorage.getItem('users')))});
-
     }
   }
 
   render () {
+
     return (
       <div className="App pt-5">
         <Header/>
 
         <Switch>
           <Route key="Home" exact path='/' component={ Home }>
-            <Home/>
+            <Home>HOME</Home>
 
-            {/* <NavLink to="/FormRegistr" className="p-2 btn btn-primary">Регистрация</NavLink> */}
+            <NavLink to="/FormRegistr" className="p-2 btn btn-primary">Регистрация</NavLink>
           </Route>
 
           <Route key="FormRegistr" exact path='/FormRegistr' component={ FormRegistr }>
@@ -64,7 +64,7 @@ class App extends React.Component {
 
             <FormRegistr handleSubmit={this.handleSubmit}/>
 
-            <NavLink to="/" className="p-2 btn btn-primary">Авторизация</NavLink>
+            <NavLink to="/" className="p-2 btn btn-primary">Авторизация!!!!</NavLink>
           </Route>
 
           <Route key="FormEdit" exact path='/FormEdit/:id' component={ FormEdit }>

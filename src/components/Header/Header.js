@@ -1,9 +1,9 @@
 import React from 'react';
-import './Header.scss';
+//import { Button } from 'reactstrap';
 
 const headerElement = () => {
     return (
-        <h1 className="header-title mb-lg-4 mb-sm-2">SPA - Регистрация (авторизация) пользователей</h1>
+        <h1>SPA - Регистрация (авторизация) пользователей</h1>
     )
 }
 

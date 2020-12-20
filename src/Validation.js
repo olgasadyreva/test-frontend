@@ -15,38 +15,38 @@ class ValidateFields {
    */
   validateUsername(username) {
     if (validator.isEmpty(username)) {
-      return 'Поле username обязательно для заполнения';
+      return 'Username is required';
     } else if (!validator.isLength(username, { min: 3 })) {
-      return 'Имя пользователя должно состоять минимум из 3 символов.';
+      return 'Username should be minimum 3 characters';
     }
     return false;
   }
 
    validateEmail(email) {
     if (validator.isEmpty(email)) {
-      return 'Поле еmail обязательно для заполнения';
+      return 'Email is required';
     } else if (!validator.isEmail(email)) {
-      return 'Неверный адрес электронной почты';
+      return 'Invalid Email';
     }
     return false;
   }
 
   validatePassword(password) {
     if (validator.isEmpty(password)) {
-      return 'Поле рassword обязательно для заполнения';
+      return 'Password is required';
     } else if (!validator.isLength(password, { min: 3 })) {
-      return 'Пароль должен состоять минимум из 8 символов';
+      return 'Password should be minimum 8 characters';
     }
     return false;
   }
 
   validaterepeatPassword(repeatpassword, password) {
     if (validator.isEmpty(repeatpassword)) {
-      return 'Поле repeat рassword обязательно для заполнения';
+      return 'Repeat password is required';
     } else if (!validator.isLength(repeatpassword, { min: 3 })) {
-      return 'Повторный пароль должен состоять минимум из 8 символов';
+      return 'Password should be minimum 8 characters';
     }else if (password !== repeatpassword) {
-      return 'Пароли не совпадают';
+      return 'Passwords do not match';
     }
     return false;
   }

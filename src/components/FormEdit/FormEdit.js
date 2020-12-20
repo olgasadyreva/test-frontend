@@ -3,7 +3,8 @@ import { Form } from 'reactstrap';
 import { validateFields } from '../../Validation';
 import { connect } from 'react-redux';
 import store from '../../store';
-import { editUser } from '../../actions';
+import { auth, registr, editUser } from '../../actions';
+import User from '../User/User';
 
 const initialState = {
   username: {
@@ -35,267 +36,324 @@ class FormEdit extends React.Component {
   }
 
   componentDidMount() {
-    let url = window.location.pathname;
-    let id = url.split("/");
-    id = id[id.length-1];
+      //alert('edit');
+      let url = window.location.pathname;
+      let id = url.slice(-8);
+      const currentStore = Object.values(store.getState());
+      
+      console.dir(currentStore);
+      
+      const user = currentStore.filter(el => el.id === id);
+      console.dir(user);
 
-    const currentStore = Object.values(store.getState());
+      const formElement = document.forms.edit;
+     // alert(formElement);
+      formElement.elements.username.value = user[0].username;
+      formElement.elements.email.value = user[0].email;
+      formElement.elements.password.value = user[0].password;
 
-    const user = currentStore.filter(el => el.id === id);
-
-    const formElement = document.forms.edit;
-    formElement.elements.username.value = user[0].username;
-    formElement.elements.email.value = user[0].email;
-    formElement.elements.password.value = user[0].password;
-
-    this.setState(() => ({
-      username: {
-        value :  user[0].username,
-      },
-      email: {
-        value :  user[0].email,
-      },
-      password: {
-        value :  user[0].password,
-      },
-      id: id
-    }));
-  }
-
-
-  /*
-  * validates the field onBlur if sumbit button is not clicked
-  * set the validateOnChange to true for that field
-  * check for error
-  */
-
-  handleBlur(validationFunc, evt) {
-    const field = evt.target.name;
-    // validate onBlur only when validateOnChange for that field is false
-    // because if validateOnChange is already true there is no need to validate onBlur
-    if (
-      this.state[field]['validateOnChange'] === false &&
-      this.state.submitCalled === false
-    ) {
-      this.setState(state => ({
-        [field]: {
-          ...state[field],
-          validateOnChange: true,
-          error: validationFunc(state[field].value)
-        }
+      this.setState(() => ({
+        username: {
+          value :  user[0].username,
+        },
+        email: {
+          value :  user[0].email,
+        },
+        password: {
+          value :  user[0].password,
+        },
+        id: id
       }));
-    }
-    return;
+      //return id;
   }
 
-  /*
-  * update the value in state for that field
-  * check for error if validateOnChange is true
-  */
-  handleChange(validationFunc, evt) {
-    const field = evt.target.name;
-    const fieldVal = evt.target.value;
+     /* handleUserInput = (e) => {
+  const name = e.target.name;
+  const value = e.target.value;
+  this.setState({[name]: value});
+} */
+
+  handleFocusInput = (e) => {
+    e.target.removeAttribute('readonly');
+  }
+/*
+ * validates the field onBlur if sumbit button is not clicked
+ * set the validateOnChange to true for that field
+ * check for error
+ */
+
+handleBlur(validationFunc, evt) {
+  const field = evt.target.name;
+  // validate onBlur only when validateOnChange for that field is false
+  // because if validateOnChange is already true there is no need to validate onBlur
+  if (
+    this.state[field]['validateOnChange'] === false &&
+    this.state.submitCalled === false
+  ) {
     this.setState(state => ({
       [field]: {
         ...state[field],
-        value: fieldVal,
-        error: state[field]['validateOnChange'] ? validationFunc(fieldVal) : ''
+        validateOnChange: true,
+        error: validationFunc(state[field].value)
+      }
+    }));
+  }
+  return;
+}
+
+/*
+ * update the value in state for that field
+ * check for error if validateOnChange is true
+ */
+handleChange(validationFunc, evt) {
+  const field = evt.target.name;
+  const fieldVal = evt.target.value;
+  this.setState(state => ({
+    [field]: {
+      ...state[field],
+      value: fieldVal,
+      error: state[field]['validateOnChange'] ? validationFunc(fieldVal) : ''
+    }
+  }));
+}
+
+handleSubmit(evt) {
+  //alert('edit');
+  evt.preventDefault();
+/* console.dir(this.state.username.value);
+console.dir(this.state.users);
+console.log(typeof(this.user)); */
+
+//  store.dispatch(editUser(user));  работает, но обнуляет хранилище и стор
+//debugger;
+/*
+* validate all fields
+* check if all fields are valid if yes then submit the Form
+* otherwise set errors for the feilds in the state
+*/
+
+
+
+
+const { username, email, password } = this.state;
+const usernameError = validateFields.validateUsername(username.value);
+const emailError = validateFields.validateEmail(email.value);
+const passwordError = validateFields.validatePassword(password.value);
+//const id = 
+
+
+if ([usernameError, emailError, passwordError].every(e => e === false)) {
+  // no errors submit the form
+
+  //Сохраняем введенные в форму данные
+     let id = this.state.id;
+    const currentUser = {
+      id: id,
+      username: username.value,
+      email: email.value,
+      password: password.value
+    };
+
+    const currentState = store.getState();
+   
+
+    const newState = Object.values(currentState).map(el => {
+      if (el.id === currentUser.id) {
+        return currentUser;
+      }
+      return el;
+    });
+    
+    store.dispatch(editUser(newState));
+    debugger;
+      window.location.assign(`/MyAccount/${this.state.id}`);
+    
+    
+
+    //localStorage.setItem('users', JSON.stringify(currentUser));
+    
+   // clear state and show all fields are validated
+   this.setState({ ...initialState, allFieldsValidated: true });
+   this.showAllFieldsValidated();
+}
+else {
+ // update the state with errors
+    this.setState(state => ({
+      formname: 'edit',
+      titleLink: 'Редактирование профиля',
+
+      username: {
+        ...state.username,
+        validateOnChange: true,
+        error: usernameError
+      },
+
+      email: {
+        ...state.email,
+        validateOnChange: true,
+        error: emailError
+      },
+      password: {
+        ...state.password,
+        validateOnChange: true,
+        error: passwordError
       }
     }));
   }
 
-  handleSubmit(evt) {
-    evt.preventDefault();
-  /*
-  * validate all fields
-  * check if all fields are valid if yes then submit the Form
-  * otherwise set errors for the feilds in the state
-  */
+}//end handlSubmit
 
-  const { username, email, password } = this.state;
-  const usernameError = validateFields.validateUsername(username.value);
-  const emailError = validateFields.validateEmail(email.value);
-  const passwordError = validateFields.validatePassword(password.value);
+showAllFieldsValidated() {
+  setTimeout(() => {
+    this.setState({ allFieldsValidated: false });
+  }, 1500);
+}
 
-  if ([usernameError, emailError, passwordError].every(e => e === false)) {
-    // no errors submit the form
+render () {
+  const { username, email, password, allFieldsValidated } = this.state;
 
-    //Сохраняем введенные в форму данные
-      const id = this.state.id;
-        const currentUser = {
-          id: id,
-          username: username.value,
-          email: email.value,
-          password: password.value
-        };
+  return (
+    <div className="wrap">
+      <header className="App-header ">Регистрация</header>
 
-      const currentState = store.getState();
+      <h2>{store.getState().length}</h2>
 
-      const newState = Object.values(currentState).map(el => {
-        if (el.id === currentUser.id) {
-          return currentUser;
-        }
-        return el;
-      });
+      <Form method='get' formname="edit" name="edit"
+    className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form' 
+    onSubmit={e => this.handleSubmit(e)}>
 
-      store.dispatch(editUser(newState));
+      <div className="form-group">
+        <label htmlFor="inputUserName">Username</label>
+        <input 
+          type='text'
+          name='username'
+          className='form-control'
+          placeholder='Введите ваше имя'
+          id='inputUserName'
+          value={username.value}
+          //onChange={this.handleUserInput}
+          onChange={evt =>
+            this.handleChange(validateFields.validateUsername, evt)
+          }
+          onBlur={evt =>
+            this.handleBlur(validateFields.validateUsername, evt)
+          }
 
-      window.location.assign(`/MyAccount/${this.state.id}`);
+          onFocus={this.handleFocusInput}
+          //message={this.state.message}
+          readOnly='readonly'/>
 
-    // clear state and show all fields are validated
-    this.setState({ ...initialState, allFieldsValidated: true });
-    this.showAllFieldsValidated();
-  }
-  else {
-  // update the state with errors
-      this.setState(state => ({
-        titleLink: 'Редактирование профиля',
-
-        username: {
-          ...state.username,
-          validateOnChange: true,
-          error: usernameError
-        },
-
-        email: {
-          ...state.email,
-          validateOnChange: true,
-          error: emailError
-        },
-        password: {
-          ...state.password,
-          validateOnChange: true,
-          error: passwordError
-        }
-      }));
-    }
-
-  }//end handlSubmit
-
-  showAllFieldsValidated() {
-    setTimeout(() => {
-      this.setState({ allFieldsValidated: false });
-    }, 1500);
-  }
-
-  cancelEdit() {
-    window.history.back();
-  }
-
-  render () {
-    const { username, email, password, allFieldsValidated } = this.state;
-
-    return (
-      <div className="wrap p-3">
-        <h3 className="mb-4">Редактирование профиля</h3>
-
-        <Form method="post" name="edit"
-          className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form' 
-          onSubmit={e => this.handleSubmit(e)}>
-
-          <div className="form-group">
-            <label htmlFor="inputUserName">Username</label>
-            <input
-              type='text'
-              name='username'
-              className='form-control'
-              placeholder='Введите ваше имя'
-              id='inputUserName'
-              value={username.value}
-              onChange={evt =>
-                this.handleChange(validateFields.validateUsername, evt)
-              }
-              onBlur={evt =>
-                this.handleBlur(validateFields.validateUsername, evt)
-              }
-
-              onFocus={this.handleFocusInput}/>
-
-              <div className='text-danger'>{username.error}</div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="inputEmail">Email address</label>
-            <input
-              type='email'
-              name='email'
-              className='form-control'
-              placeholder='Введите ваш Email'
-              id='inputEmail'
-              value={email.value}
-              onChange={evt =>
-                this.handleChange(validateFields.validateEmail, evt)
-              }
-              onBlur={evt =>
-                this.handleBlur(validateFields.validateEmail, evt)
-              }
-              onFocus={this.handleFocusInput}/>
-
-              <div className='text-danger'>{email.error}</div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="inputPassword">Password</label>
-            <input
-              type='password'
-              name='password'
-              className='form-control'
-              placeholder='Введите ваш пароль'
-              id='inputPassword'
-              value={password.value}
-              onChange={evt =>
-                this.handleChange(validateFields.validatePassword, evt)
-              }
-              onBlur={evt =>
-                this.handleBlur(validateFields.validatePassword, evt)
-              }/>
-
-            <div className='text-danger'>{password.error}</div>
-          </div>
-
-          <button
-            type='submit'
-            name='save'
-            className='btn btn-primary btn-block m-auto'
-            onClick={this.submitForm}
-            onMouseDown={() => this.setState({ submitCalled: true })}>
-              Сохранить
-          </button>
-          <button
-            type='button'
-            name='cancel'
-            className='btn btn-secondary btn-block'
-            onClick={this.cancelEdit}>
-              Отменить
-          </button>
-        </Form>
-
-        <div className="card-body">
-          {allFieldsValidated && (
-            <p className="text-success text-center">
-              Ваши данные обновлены!
-            </p>
-          )}
-        </div>
-
-        <hr/>
-
+          <div className='text-danger'>{username.error}</div>
       </div>
-    )
-  }//end render
+
+      <div className="form-group">
+        <label htmlFor="inputEmail">Email address</label>
+        <input 
+          type='email'
+          name='email'
+          className='form-control'
+          placeholder='Введите ваш Email'
+          id='inputEmail'
+          value={email.value}
+          //onChange={this.handleUserInput}
+          onChange={evt =>
+            this.handleChange(validateFields.validateEmail, evt)
+          }
+          onBlur={evt =>
+            this.handleBlur(validateFields.validateEmail, evt)
+          }
+
+          onFocus={this.handleFocusInput}
+          message={this.state.message}
+          readOnly='readonly'/>
+
+          <div className='text-danger'>{email.error}</div>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="inputPassword">Password</label>
+        <input 
+          type='password'
+          name='password'
+          className='form-control'
+          placeholder='Введите ваш пароль'
+          id='inputPassword'
+          value={password.value}
+          onChange={evt =>
+            this.handleChange(validateFields.validatePassword, evt)
+          }
+          onBlur={evt =>
+            this.handleBlur(validateFields.validatePassword, evt)
+          }/>
+
+        <div className='text-danger'>{password.error}</div>
+      </div>
+
+      
+
+      <button 
+        type='submit'
+        name='save'
+        className='btn btn-secondary btn-block'
+        onClick={this.submitForm}
+        onMouseDown={() => this.setState({ submitCalled: true })}>
+          Сохранить
+      </button>
+    </Form>
+
+      <div className="card-body">
+        {allFieldsValidated && ( 
+          <p className="text-success text-center">
+            Success, All fields are validated
+          </p>
+        )}
+      </div>
+
+      <hr/>
+
+      {/* {
+        <ul className="users-list">
+          {
+            users.map((user) => {
+
+              return (
+
+                <User
+                  key = {user.id}
+                  id = {user.id}
+                  username = {user.username}
+                  email = {user.email}
+                  password= {user.password}
+                  onBtnEditUsersClick = { () => this.props.editUser(user)}
+                />
+              )
+            })
+          }
+      </ul>
+      } */}
+
+    </div>
+  )
+}//end render
 
 } //end class
 
 const mapStateToProps = (state) => {
   return {
     users: state,
+    //isAuth: state.isAuth,
+    //isRegistr: state.isRegistr
   }
 }
 
-const mapDispatchToProps = () => {
+const mapDispatchToProps = (dispatch) => {
+  //registr;
   return {
-    editUser
+    editUser: (newUsers) => dispatch(auth(newUsers)),
+    //registr: (currentUser) => {dispatch(registr(currentUser)); console.log(store.dispath.type)},
   }
 }
 
 export  default connect(mapStateToProps,mapDispatchToProps)(FormEdit);
+
+//export  default FormEdit;

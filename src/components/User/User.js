@@ -5,11 +5,11 @@ const user = (props) => {
   const {id, username, email, password } = props;
 
   return(
-    <div className="user-item d-flex justify-content-center overflow-scroll w-100" key={id} >
-      <div className="name col-3 border border-primary p-2 text-break">{username}</div>
-      <div className="text col-5 border border-primary p-2 text-break">{email}</div>
-      <div className="datetime col-4 border border-primary p-2 text-break">{password}</div>
-    </div>
+    <li className="user-item" key={id} >
+      <span className="name">{username}</span>
+      <span className="text">{email}</span>
+      <span className="datetime">{password}</span>
+    </li>
 )
 
 }

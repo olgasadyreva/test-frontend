@@ -1,44 +1,47 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import store from '../../store';
+import { editUser } from '../../actions';
 
-let url = window.location.pathname;
-let id = url.split("/");
-id = id[id.length-1];
 
-const myAccount = () => {
-    const currentLocalStorage = Object.values(JSON.parse(localStorage.getItem('users')));
+   //console.log('1' + editData);
+   let url = window.location.pathname;
+    let id = url.slice(-8);
+    
+    
+   
+const myAccount = (props) => {
+    /* function componentWillUnmount() {
+        alert(1);
+            if(!localStorage.getItem("users")){
+                localStorage.setItem("users", this.props.users);
+            }
+        } */
 
+    const {editData, openModal,handleSubmit} = props;
+        let url = window.location.pathname;
+        let id = url.slice(-8);
+
+        
+     alert(id);
+     const currentLocalStorage = Object.values(JSON.parse(localStorage.getItem('users')));
+  console.dir(currentLocalStorage);
   //Ищем пользователя по id
-    const user = currentLocalStorage.filter((el) =>  { return el['id'] === id});
+    const user = currentLocalStorage.filter((el) =>  { console.dir(el); return el['id'] === id});
+
 
     return (
-        <div className="wrap col-md-4 col-xs-12 m-auto">
-            <h3 className="mb-4">Личный кабинет</h3>
+        <>
+            <h1>Личный кабинет</h1>
+            <div>Мои учетные данные</div>
+            <div>id: {user[0].id}</div>
+            <div>username: {user[0].username}</div>
+            <div>email: {user[0].email}</div>
+            <div>password: {user[0].password}</div>
 
-            <h4 className="mb-4">Мои учетные данные:</h4>
-
-            <div className="container p-3 border border-dark rounded mw-30 mb-4 ">
-                <div className="d-flex flex-row justify-content-between">
-                    <div>id:</div>
-                    <div>{user[0].id}</div>
-                </div>
-                <div className="d-flex flex-row justify-content-between">
-                    <div>username:</div>
-                    <div>{user[0].username}</div>
-                </div>
-                <div className="d-flex flex-row justify-content-between">
-                    <div>email:</div>
-                    <div>{user[0].email}</div>
-                </div>
-                <div className="d-flex flex-row justify-content-between">
-                    <div>password:</div>
-                    <div>{user[0].password}</div>
-                </div>
-            </div>
-
-            <button className="col-lg-8 col-md-10 col-sm-12 p-2 btn btn-block btn-primary mb-3 mx-auto" type="button" onClick={() => {window.location.assign(`/FormEdit/${user[0].id}`);}}>Редактировать данные</button>
-            <Link to="/" className="col-lg-8 col-md-10 col-sm-12 d-block mx-auto p-2 btn btn-block btn-secondary" role="button">Выйти из аккаунта</Link>
-         </div>
+            <button type="button" onClick={() => {window.location.assign(`/FormEdit/${user[0].id}`);}}>Редактировать данные</button>
+            <a href="/">Выйти из аккаунта</a>
+        </>
     )
 }
 

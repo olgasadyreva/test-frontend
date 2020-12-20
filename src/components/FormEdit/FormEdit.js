@@ -36,9 +36,10 @@ class FormEdit extends React.Component {
   }
 
   componentDidMount() {
-      //alert('edit');
-      let url = window.location.pathname;
-      let id = url.slice(-8);
+    let hash = window.location.hash;
+    let id = hash.split('/');
+    id = id[id.length-1];
+    alert(id);
       const currentStore = Object.values(store.getState());
       
       console.dir(currentStore);
@@ -47,7 +48,7 @@ class FormEdit extends React.Component {
       console.dir(user);
 
       const formElement = document.forms.edit;
-     // alert(formElement);
+     
       formElement.elements.username.value = user[0].username;
       formElement.elements.email.value = user[0].email;
       formElement.elements.password.value = user[0].password;
@@ -67,15 +68,6 @@ class FormEdit extends React.Component {
       //return id;
   }
 
-     /* handleUserInput = (e) => {
-  const name = e.target.name;
-  const value = e.target.value;
-  this.setState({[name]: value});
-} */
-
-  handleFocusInput = (e) => {
-    e.target.removeAttribute('readonly');
-  }
 /*
  * validates the field onBlur if sumbit button is not clicked
  * set the validateOnChange to true for that field
@@ -165,8 +157,8 @@ if ([usernameError, emailError, passwordError].every(e => e === false)) {
     });
     
     store.dispatch(editUser(newState));
-    debugger;
-      window.location.assign(`/MyAccount/${this.state.id}`);
+    //debugger;
+      window.location.hash = `/MyAccount/${this.state.id}`;
     
     
 
@@ -218,7 +210,7 @@ render () {
 
       <h2>{store.getState().length}</h2>
 
-      <Form method='get' formname="edit" name="edit"
+      <Form method='post' name="edit"
     className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form' 
     onSubmit={e => this.handleSubmit(e)}>
 
@@ -239,9 +231,7 @@ render () {
             this.handleBlur(validateFields.validateUsername, evt)
           }
 
-          onFocus={this.handleFocusInput}
-          //message={this.state.message}
-          readOnly='readonly'/>
+          onFocus={this.handleFocusInput}/>
 
           <div className='text-danger'>{username.error}</div>
       </div>
@@ -255,7 +245,6 @@ render () {
           placeholder='Введите ваш Email'
           id='inputEmail'
           value={email.value}
-          //onChange={this.handleUserInput}
           onChange={evt =>
             this.handleChange(validateFields.validateEmail, evt)
           }
@@ -263,9 +252,7 @@ render () {
             this.handleBlur(validateFields.validateEmail, evt)
           }
 
-          onFocus={this.handleFocusInput}
-          message={this.state.message}
-          readOnly='readonly'/>
+          onFocus={this.handleFocusInput}/>
 
           <div className='text-danger'>{email.error}</div>
       </div>
@@ -299,12 +286,20 @@ render () {
         onMouseDown={() => this.setState({ submitCalled: true })}>
           Сохранить
       </button>
+      <button 
+        type='button'
+        name='cancel'
+        className='btn btn-secondary btn-block'
+        // onClick={() => {window.location.hash =`/MyAccount/${this.id}`;}}>
+          onClick={() => {window.history.back()}}>
+          Отменить
+      </button>
     </Form>
 
       <div className="card-body">
         {allFieldsValidated && ( 
           <p className="text-success text-center">
-            Success, All fields are validated
+            Ваши данные обновлены!
           </p>
         )}
       </div>

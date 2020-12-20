@@ -1,9 +1,8 @@
 import React from 'react';
 import { Form } from 'reactstrap';
 import { validateFields } from '../../Validation';
-import { connect } from 'react-redux';
 import store from '../../store';
-import { auth, registr, editUser } from '../../actions';
+//import { auth, registr, editUser } from '../../actions';
 import User from '../User/User';
 
 const initialState = {
@@ -20,7 +19,6 @@ const initialState = {
  
   submitCalled: false,
   allFieldsValidated: false,
-  //isAuth: this.props.isAuth
 };
 
 class FormAuth extends React.Component {
@@ -29,16 +27,6 @@ class FormAuth extends React.Component {
       this.state = initialState;
   }
 
-     /* handleUserInput = (e) => {
-  const name = e.target.name;
-  const value = e.target.value;
-  this.setState({[name]: value});
-} */
-
-  handleFocusInput = (e) => {
-    //alert(e.target);
-    e.target.removeAttribute('readonly');
-  }
 /*
  * validates the field onBlur if sumbit button is not clicked
  * set the validateOnChange to true for that field
@@ -95,31 +83,37 @@ const passwordError = validateFields.validatePassword(password.value);
 
 if ([emailError, passwordError].every(e => e === false)) {
   // no errors submit the form
-  //alert(Object.values(JSON.parse(localStorage.getItem('users'))).length);
-  const currentStore = store.getState();
+
+  //получает текущее сотсояние хранилища
+  const currentStore = Object.values(store.getState());
+ //Проверяем, зарегистрирован ли такой email
   const user = currentStore.filter(el => el.email === email.value);
   //alert(user[0]['id']);
   //const currentLocalStorage = Object.values(JSON.parse(localStorage.getItem('users')));
   
   //console.dir(currentLocalStorage.length);
   
-  //Проверяем, арегистрирован ли такой email
+ 
    // const user = currentLocalStorage.filter((el) =>  { console.dir(el); return el['email'] === email.value});
     
     //const user = currentLocalStorage.filter(el =>el[2]['email'] === email.value); 
 
-    console.dir(user);
-    console.dir(typeof(user));
-    console.log(user.length);
+    //console.dir(user);
+    //console.dir(typeof(user));
+    //console.log(user.length);
     
     if(user.length !== 0) {
       
       alert('user exist');
        //Сохраняем введенные в форму данные
+     //window.location.assign(`/MyAccount/${id}`);
       const id = user[0]['id'];
-      console.dir(id);
+      //window.location = "http://www.w3schools.com";
+      //window.location.assign(`/MyAccount/${id}`);
+      window.location.hash = `/MyAccount/${id}`;
+      //console.dir(id);
       
-      const currentUser = {
+     /*  const currentUser = {
       id: id,
       email: email.value,
       password: password.value
@@ -127,11 +121,12 @@ if ([emailError, passwordError].every(e => e === false)) {
       console.dir(currentUser);
       store.dispatch(auth(currentUser));
       
-      window.location.assign(`/MyAccount/${currentUser.id}`);
-      //this.setState({isAuth: true});
+      window.location.assign(`/MyAccount/${currentUser.id}`); */
     }
     else {
-      alert('new user');
+      alert('Вы не зарегистрированы!');
+      this.setState({ ...initialState, allFieldsValidated: false });
+      //this.showAllFieldsValidated();
     }
     
     //alert(user);
@@ -150,8 +145,8 @@ if ([emailError, passwordError].every(e => e === false)) {
     //localStorage.setItem('users', JSON.stringify(currentUser));
 
    // clear state and show all fields are validated
-   this.setState({ ...initialState, allFieldsValidated: true });
-   this.showAllFieldsValidated();
+   //this.setState({ ...initialState, allFieldsValidated: true });
+   //this.showAllFieldsValidated();
 
  // window.location.href = `/MyAccount/${id}`;
 } else {
@@ -197,7 +192,7 @@ render () {
 
         <h2>{store.getState().length}</h2>
 
-        <Form method='get' formname="auth"
+        <Form method='post' name="auth"
           className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form' 
           onSubmit={e => this.handleSubmit(e)}>
 
@@ -218,9 +213,7 @@ render () {
               this.handleBlur(validateFields.validateEmail, evt)
             }
 
-            onFocus={this.handleFocusInput}
-            message={this.state.message}
-            readOnly='readonly'/>
+            onFocus={this.handleFocusInput}/>
 
             <div className='text-danger'>{email.error}</div>
         </div>
@@ -257,7 +250,7 @@ render () {
         <div className="card-body">
           {allFieldsValidated && (
             <p className="text-success text-center">
-              Success, All fields are validated
+              Вы успешно авторизовались!
             </p>
           )}
         </div>
@@ -294,21 +287,21 @@ render () {
 
 } //end class
 
-const mapStateToProps = (state) => {
+/* const mapStateToProps = (state) => {
   return {
     users: state,
     //isAuth: state.isAuth,
     //isRegistr: state.isRegistr
   }
-}
+} */
 
-const mapDispatchToProps = (dispatch) => {
+/* const mapDispatchToProps = (dispatch) => {
   //registr;
   return {
     auth: (oldUser) => dispatch(auth(oldUser)),
     //registr: (currentUser) => {dispatch(registr(currentUser)); console.log(store.dispath.type)},
   }
-}
+} */
 
 //export  default connect(mapStateToProps,mapDispatchToProps)(FormAuth);
 

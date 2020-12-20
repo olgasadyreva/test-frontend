@@ -31,7 +31,6 @@ const initialState = {
 
   submitCalled: false,
   allFieldsValidated: false,
-  isRegistr: false
 };
 
 class FormRegistr extends React.Component {
@@ -40,15 +39,7 @@ class FormRegistr extends React.Component {
       this.state = initialState;
   }
 
-     /* handleUserInput = (e) => {
-  const name = e.target.name;
-  const value = e.target.value;
-  this.setState({[name]: value});
-} */
 
-  handleFocusInput = (e) => {
-    e.target.removeAttribute('readonly');
-  }
 /*
  * validates the field onBlur if sumbit button is not clicked
  * set the validateOnChange to true for that field
@@ -98,7 +89,7 @@ handleSubmit(evt) {
 * otherwise set errors for the feilds in the state
 */
 
-const { username, email, password, repeatpassword, isRegistr } = this.state;
+const { username, email, password, repeatpassword } = this.state;
 const usernameError = validateFields.validateUsername(username.value);
 const emailError = validateFields.validateEmail(email.value);
 const passwordError = validateFields.validatePassword(password.value);
@@ -190,7 +181,7 @@ render () {
         : null }
         
 
-        <Form method='get' formname="registr"
+        <Form method='post' name="registr"
           className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form' 
           onSubmit={e => this.handleSubmit(e)}>
 
@@ -211,8 +202,7 @@ render () {
               this.handleBlur(validateFields.validateUsername, evt)
             }
 
-            onFocus={this.handleFocusInput}
-            readOnly='readonly'/>
+            onFocus={this.handleFocusInput}/>
 
             <div className='text-danger'>{username.error}</div>
           </div>
@@ -235,8 +225,7 @@ render () {
             }
 
             onFocus={this.handleFocusInput}
-            message={this.state.message}
-            readOnly='readonly'/>
+            message={this.state.message}/>
 
             <div className='text-danger'>{email.error}</div>
           </div>
@@ -276,8 +265,7 @@ render () {
           onBlur={evt =>
             this.handleBlur(validateFields.validaterepeatPassword, evt)
           }
-          onFocus={this.handleFocusInput}
-          readOnly='readonly'/>
+          onFocus={this.handleFocusInput}/>
 
           <div className='text-danger'>{repeatpassword.error}</div>
           </div>
@@ -295,7 +283,7 @@ render () {
         <div className="card-body">
         {allFieldsValidated && (
           <p className="text-success text-center">
-            Success, All fields are validated
+            Вы зарегистрированы!
           </p>
         )}
         </div>

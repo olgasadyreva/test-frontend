@@ -113,9 +113,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     registr: (newUser) => dispatch(registr(newUser)),
-    auth: (oldUser) => dispatch(registr(oldUser)),
+    //auth: (oldUser) => dispatch(registr(oldUser)),
    // registr,
-    editUser: (id, state) => dispatch(editUser(id, state))
+    //editUser: (id, state) => dispatch(editUser(id, state))
+    editUser
 }
 }
 

@@ -4,12 +4,6 @@ import store from '../../store';
 import { editUser } from '../../actions';
 
 
-   //console.log('1' + editData);
-   let url = window.location.pathname;
-    let id = url.slice(-8);
-    
-    
-   
 const myAccount = (props) => {
     /* function componentWillUnmount() {
         alert(1);
@@ -19,16 +13,14 @@ const myAccount = (props) => {
         } */
 
     const {editData, openModal,handleSubmit} = props;
-        let url = window.location.pathname;
-        let id = url.slice(-8);
-
+        let hash = window.location.hash;
+        let id = hash.split('/');
+        id = id[id.length-1];
         
-     alert(id);
      const currentLocalStorage = Object.values(JSON.parse(localStorage.getItem('users')));
-  console.dir(currentLocalStorage);
-  //Ищем пользователя по id
-    const user = currentLocalStorage.filter((el) =>  { console.dir(el); return el['id'] === id});
+    //Ищем пользователя по id
 
+    const user = currentLocalStorage.filter((el) =>  { console.dir(el); return el['id'] === id});
 
     return (
         <>
@@ -39,7 +31,7 @@ const myAccount = (props) => {
             <div>email: {user[0].email}</div>
             <div>password: {user[0].password}</div>
 
-            <button type="button" onClick={() => {window.location.assign(`/FormEdit/${user[0].id}`);}}>Редактировать данные</button>
+            <button type="button" onClick={() => {window.location.hash =`/FormEdit/${user[0].id}`;}}>Редактировать данные</button>
             <a href="/">Выйти из аккаунта</a>
         </>
     )

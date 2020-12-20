@@ -8,11 +8,6 @@ const users = (state = [], action) => {
   switch (action.type) {
 //const reducer = (state = initialState, action) => {
     //switch (action.type) {
-        case ('AUTH'):
-            return {
-                ...state,
-                //isAuth: action.payload,
-            }
 
         case ('REGISTR'):
               return [
@@ -26,9 +21,8 @@ const users = (state = [], action) => {
               ];
         
         case 'EDIT USER':
-         
-          console.log(action.payload);
-          debugger;
+          //console.log(action.payload);
+          //debugger;
           return action.payload;
             
          // console.log(action.payload);

@@ -3,8 +3,7 @@ import { Form } from 'reactstrap';
 import { validateFields } from '../../Validation';
 import { connect } from 'react-redux';
 import store from '../../store';
-import { auth, registr, editUser } from '../../actions';
-import User from '../User/User';
+import { editUser } from '../../actions';
 
 const initialState = {
   username: {
@@ -39,33 +38,28 @@ class FormEdit extends React.Component {
     let hash = window.location.hash;
     let id = hash.split('/');
     id = id[id.length-1];
-    alert(id);
-      const currentStore = Object.values(store.getState());
-      
-      console.dir(currentStore);
-      
-      const user = currentStore.filter(el => el.id === id);
-      console.dir(user);
 
-      const formElement = document.forms.edit;
-     
-      formElement.elements.username.value = user[0].username;
-      formElement.elements.email.value = user[0].email;
-      formElement.elements.password.value = user[0].password;
+    const currentStore = Object.values(store.getState());
+    const user = currentStore.filter(el => el.id === id);
 
-      this.setState(() => ({
-        username: {
-          value :  user[0].username,
-        },
-        email: {
-          value :  user[0].email,
-        },
-        password: {
-          value :  user[0].password,
-        },
-        id: id
-      }));
-      //return id;
+    const formElement = document.forms.edit;
+
+    formElement.elements.username.value = user[0].username;
+    formElement.elements.email.value = user[0].email;
+    formElement.elements.password.value = user[0].password;
+
+    this.setState(() => ({
+      username: {
+        value :  user[0].username,
+      },
+      email: {
+        value :  user[0].email,
+      },
+      password: {
+        value :  user[0].password,
+      },
+      id: id
+    }));
   }
 
 /*
@@ -109,36 +103,24 @@ handleChange(validationFunc, evt) {
   }));
 }
 
-handleSubmit(evt) {
-  //alert('edit');
-  evt.preventDefault();
-/* console.dir(this.state.username.value);
-console.dir(this.state.users);
-console.log(typeof(this.user)); */
-
-//  store.dispatch(editUser(user));  работает, но обнуляет хранилище и стор
-//debugger;
+handleSubmit(e) {
+  e.preventDefault();
 /*
 * validate all fields
 * check if all fields are valid if yes then submit the Form
 * otherwise set errors for the feilds in the state
 */
 
-
-
-
 const { username, email, password } = this.state;
 const usernameError = validateFields.validateUsername(username.value);
 const emailError = validateFields.validateEmail(email.value);
 const passwordError = validateFields.validatePassword(password.value);
-//const id = 
-
 
 if ([usernameError, emailError, passwordError].every(e => e === false)) {
   // no errors submit the form
 
   //Сохраняем введенные в форму данные
-     let id = this.state.id;
+    let id = this.state.id;
     const currentUser = {
       id: id,
       username: username.value,
@@ -147,7 +129,6 @@ if ([usernameError, emailError, passwordError].every(e => e === false)) {
     };
 
     const currentState = store.getState();
-   
 
     const newState = Object.values(currentState).map(el => {
       if (el.id === currentUser.id) {
@@ -157,13 +138,8 @@ if ([usernameError, emailError, passwordError].every(e => e === false)) {
     });
     
     store.dispatch(editUser(newState));
-    //debugger;
-      window.location.hash = `/MyAccount/${this.state.id}`;
-    
-    
+    window.location.hash = `/MyAccount/${this.state.id}`;
 
-    //localStorage.setItem('users', JSON.stringify(currentUser));
-    
    // clear state and show all fields are validated
    this.setState({ ...initialState, allFieldsValidated: true });
    this.showAllFieldsValidated();
@@ -171,15 +147,12 @@ if ([usernameError, emailError, passwordError].every(e => e === false)) {
 else {
  // update the state with errors
     this.setState(state => ({
-      formname: 'edit',
       titleLink: 'Редактирование профиля',
-
       username: {
         ...state.username,
         validateOnChange: true,
         error: usernameError
       },
-
       email: {
         ...state.email,
         validateOnChange: true,
@@ -192,7 +165,6 @@ else {
       }
     }));
   }
-
 }//end handlSubmit
 
 showAllFieldsValidated() {
@@ -205,40 +177,36 @@ render () {
   const { username, email, password, allFieldsValidated } = this.state;
 
   return (
-    <div className="wrap">
-      <header className="App-header ">Регистрация</header>
-
-      <h2>{store.getState().length}</h2>
+    <div className="wrap p-3">
+      <h3>Редактирование данных</h3>
 
       <Form method='post' name="edit"
-    className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form' 
-    onSubmit={e => this.handleSubmit(e)}>
+        className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form' 
+        onSubmit={e => this.handleSubmit(e)}>
 
       <div className="form-group">
         <label htmlFor="inputUserName">Username</label>
-        <input 
+        <input
           type='text'
           name='username'
           className='form-control'
           placeholder='Введите ваше имя'
           id='inputUserName'
           value={username.value}
-          //onChange={this.handleUserInput}
           onChange={evt =>
             this.handleChange(validateFields.validateUsername, evt)
           }
           onBlur={evt =>
             this.handleBlur(validateFields.validateUsername, evt)
           }
-
           onFocus={this.handleFocusInput}/>
 
-          <div className='text-danger'>{username.error}</div>
+        <div className='text-danger'>{username.error}</div>
       </div>
 
       <div className="form-group">
         <label htmlFor="inputEmail">Email address</label>
-        <input 
+        <input
           type='email'
           name='email'
           className='form-control'
@@ -251,10 +219,9 @@ render () {
           onBlur={evt =>
             this.handleBlur(validateFields.validateEmail, evt)
           }
-
           onFocus={this.handleFocusInput}/>
 
-          <div className='text-danger'>{email.error}</div>
+        <div className='text-danger'>{email.error}</div>
       </div>
 
       <div className="form-group">
@@ -276,22 +243,19 @@ render () {
         <div className='text-danger'>{password.error}</div>
       </div>
 
-      
-
-      <button 
+      <button
         type='submit'
         name='save'
-        className='btn btn-secondary btn-block'
-        onClick={this.submitForm}
+        className='btn btn-blue btn-block mb-2'
         onMouseDown={() => this.setState({ submitCalled: true })}>
           Сохранить
       </button>
-      <button 
+
+      <button
         type='button'
         name='cancel'
         className='btn btn-secondary btn-block'
-        // onClick={() => {window.location.hash =`/MyAccount/${this.id}`;}}>
-          onClick={() => {window.history.back()}}>
+        onClick={() => {window.history.back()}}>
           Отменить
       </button>
     </Form>
@@ -303,30 +267,6 @@ render () {
           </p>
         )}
       </div>
-
-      <hr/>
-
-      {/* {
-        <ul className="users-list">
-          {
-            users.map((user) => {
-
-              return (
-
-                <User
-                  key = {user.id}
-                  id = {user.id}
-                  username = {user.username}
-                  email = {user.email}
-                  password= {user.password}
-                  onBtnEditUsersClick = { () => this.props.editUser(user)}
-                />
-              )
-            })
-          }
-      </ul>
-      } */}
-
     </div>
   )
 }//end render
@@ -336,19 +276,13 @@ render () {
 const mapStateToProps = (state) => {
   return {
     users: state,
-    //isAuth: state.isAuth,
-    //isRegistr: state.isRegistr
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
-  //registr;
   return {
-    editUser: (newUsers) => dispatch(auth(newUsers)),
-    //registr: (currentUser) => {dispatch(registr(currentUser)); console.log(store.dispath.type)},
+    editUser,
   }
 }
 
 export  default connect(mapStateToProps,mapDispatchToProps)(FormEdit);
-
-//export  default FormEdit;

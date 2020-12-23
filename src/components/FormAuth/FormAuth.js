@@ -2,7 +2,6 @@ import React from 'react';
 import { Form } from 'reactstrap';
 import { validateFields } from '../../Validation';
 import store from '../../store';
-//import { auth, registr, editUser } from '../../actions';
 import User from '../User/User';
 
 const initialState = {
@@ -16,15 +15,15 @@ const initialState = {
     validateOnChange: false,
     error: ''
   },
- 
+
   submitCalled: false,
   allFieldsValidated: false,
 };
 
 class FormAuth extends React.Component {
   constructor(props) {
-      super(props);
-      this.state = initialState;
+    super(props);
+    this.state = initialState;
   }
 
 /*
@@ -68,9 +67,9 @@ handleChange(validationFunc, evt) {
   }));
 }
 
-handleSubmit(evt) {
-  evt.preventDefault();
-  
+handleSubmit(e) {
+  e.preventDefault();
+
 /*
 * validate all fields
 * check if all fields are valid if yes then submit the Form
@@ -88,74 +87,23 @@ if ([emailError, passwordError].every(e => e === false)) {
   const currentStore = Object.values(store.getState());
  //Проверяем, зарегистрирован ли такой email
   const user = currentStore.filter(el => el.email === email.value);
-  //alert(user[0]['id']);
-  //const currentLocalStorage = Object.values(JSON.parse(localStorage.getItem('users')));
-  
-  //console.dir(currentLocalStorage.length);
-  
- 
-   // const user = currentLocalStorage.filter((el) =>  { console.dir(el); return el['email'] === email.value});
-    
-    //const user = currentLocalStorage.filter(el =>el[2]['email'] === email.value); 
 
-    //console.dir(user);
-    //console.dir(typeof(user));
-    //console.log(user.length);
-    
-    if(user.length !== 0) {
-      
-      alert('user exist');
-       //Сохраняем введенные в форму данные
-     //window.location.assign(`/MyAccount/${id}`);
-      const id = user[0]['id'];
-      //window.location = "http://www.w3schools.com";
-      //window.location.assign(`/MyAccount/${id}`);
-      window.location.hash = `/MyAccount/${id}`;
-      //console.dir(id);
-      
-     /*  const currentUser = {
-      id: id,
-      email: email.value,
-      password: password.value
-      };
-      console.dir(currentUser);
-      store.dispatch(auth(currentUser));
-      
-      window.location.assign(`/MyAccount/${currentUser.id}`); */
-    }
-    else {
-      alert('Вы не зарегистрированы!');
-      this.setState({ ...initialState, allFieldsValidated: false });
-      //this.showAllFieldsValidated();
-    }
-    
-    //alert(user);
-   // const user = currentStore.filter(el => el.email === email.value);
-   // alert(user[0]['id']);
-
- 
-
-  
-  
-     /*  const user = currentLocalStorage.every(el =>  { return el['email'] === id});
-    const user = currentStore.filter(el => el.email === email.value);
-    alert(user[0]['id']); */
-
-    //store.dispatch(auth(currentUser));
-    //localStorage.setItem('users', JSON.stringify(currentUser));
-
-   // clear state and show all fields are validated
-   //this.setState({ ...initialState, allFieldsValidated: true });
-   //this.showAllFieldsValidated();
-
- // window.location.href = `/MyAccount/${id}`;
-} else {
+  if(user.length !== 0) {
+    //Отправляем пользователя на страницу аккаунта
+    const id = user[0]['id'];
+    window.location.hash = `/MyAccount/${id}`;
+  }
+  else {
+    alert("Вы не зарегистрированы!");
+    this.setState({ ...initialState, allFieldsValidated: false });
+  }
+}
+else {
  // update the state with errors
     this.setState(state => ({
-      formname: 'edit',
       titleLink: 'Авторизация',
 
-      email: {
+       email: {
         ...state.email,
         validateOnChange: true,
         error: emailError
@@ -178,22 +126,15 @@ showAllFieldsValidated() {
 
 render () {
 
-  //const local = localStorage.getItem('users');
-  //if(local && JSON.parse(local.length !== 0)) {
-
    let users= JSON.parse(localStorage.getItem('users'));
     const { email, password, allFieldsValidated } = this.state;
 
-    
-
     return (
-      <div className="wrap">
+      <div className="wrap p-3">
         <h3>Форма авторизации</h3>
 
-        <h2>{store.getState().length}</h2>
-
-        <Form method='post' name="auth"
-          className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form' 
+        <Form method="post" name="auth" 
+          className='container col-lg-6 mt-5 border border-dark rounded p-3 js-form'
           onSubmit={e => this.handleSubmit(e)}>
 
         <div className="form-group">
@@ -205,17 +146,15 @@ render () {
             placeholder='Введите ваш Email'
             id='inputEmail'
             value={email.value}
-            //onChange={this.handleUserInput}
             onChange={evt =>
               this.handleChange(validateFields.validateEmail, evt)
             }
             onBlur={evt =>
               this.handleBlur(validateFields.validateEmail, evt)
             }
-
             onFocus={this.handleFocusInput}/>
 
-            <div className='text-danger'>{email.error}</div>
+          <div className='text-danger'>{email.error}</div>
         </div>
 
         <div className="form-group">
@@ -240,8 +179,7 @@ render () {
         <button
           type='submit'
           name='auth'
-          className='btn btn-secondary btn-block'
-          onClick={this.submitForm}
+          className='btn btn-blue btn-block'
           onMouseDown={() => this.setState({ submitCalled: true })}>
             Войти
         </button>
@@ -256,53 +194,44 @@ render () {
         </div>
 
         <hr/>
+        <h3>Зарегистрированные пользователи</h3>
 
-       { users && users.length !== 0 ? 
-          <ul className="users-list">
-            {
-              Object.values(users).map((user) => {
+        <ul className="users-list mt-5">
 
-                return (
+          { users && users.length !== 0 ?
+            <li className="user-item">
+              <div className="user-cell user-cell__title">Username</div>
+              <div className="user-cell user-cell__title">Email</div>
+              <div className="user-cell user-cell__title">Password</div>
+            </li>
+          : null}
 
-                  <User
-                    key = {user.id}
-                    id = {user.id}
-                    username = {user.username}
-                    email = {user.email}
-                    password= {user.password}
-                    onBtnEditUsersClick = { () => this.props.editUser(user)}
-                  />
-                )
-              })
-            }
+         { users && users.length !== 0 ?
+
+            Object.values(users).map((user) => {
+
+              return (
+
+                <User
+                  key = {user.id}
+                  id = {user.id}
+                  username = {user.username}
+                  email = {user.email}
+                  password= {user.password}
+                  className="user-item"
+                  onBtnEditUsersClick = { () => this.props.editUser(user)}
+                />
+              )
+            })
+            :
+            <p className="text-danger text-center">Зарегистрированных пользователей нет!</p>
+          }
+          
         </ul>
-        :
-          <h3>Зарегистрированных пользователей нет!</h3>
-        }
-
       </div>
     )
-  //enf if
 }//end render
 
 } //end class
-
-/* const mapStateToProps = (state) => {
-  return {
-    users: state,
-    //isAuth: state.isAuth,
-    //isRegistr: state.isRegistr
-  }
-} */
-
-/* const mapDispatchToProps = (dispatch) => {
-  //registr;
-  return {
-    auth: (oldUser) => dispatch(auth(oldUser)),
-    //registr: (currentUser) => {dispatch(registr(currentUser)); console.log(store.dispath.type)},
-  }
-} */
-
-//export  default connect(mapStateToProps,mapDispatchToProps)(FormAuth);
 
 export  default FormAuth;

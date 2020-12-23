@@ -1,0 +1,51 @@
+.App {
+  text-align: center;
+}
+
+.pt-3 {
+  padding-top: 40px;
+}
+
+.btn.btn-blue {
+  background-color:blue;
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  &:hover {
+      color: #ffffff;
+      background-color: darken(rgb(0,0,255), 15%);
+  }
+}
+
+.users-list {
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
+  margin: 10px auto;
+  padding-left: 0;
+  list-style: none;
+}
+
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
+  margin: 0;
+}
+
+.user-cell {
+  flex-basis: 33.33%;
+  border: 1px solid blue;
+  padding: 5px;
+
+  @media (max-width: 768px) {
+      word-break: break-word;
+  }
+}
+
+.user-cell__title {
+  font-weight: bold;
+  flex-basis: 33.33%;
+}
+

@@ -4,7 +4,6 @@ import FormAuth from '../FormAuth/FormAuth';
 const Home = () => {
     return (
         <FormAuth/>
-          /* <FormAuth isAuth={this.state.isAuth}/> */
     )
 }
 
